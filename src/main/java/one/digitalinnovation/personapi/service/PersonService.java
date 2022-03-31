@@ -1,17 +1,20 @@
 package one.digitalinnovation.personapi.service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import lombok.AllArgsConstructor;
 import one.digitalinnovation.personapi.dto.request.PersonDTO;
 import one.digitalinnovation.personapi.dto.response.MessageResponseDTO;
 import one.digitalinnovation.personapi.entity.Person;
+import one.digitalinnovation.personapi.exception.CpfAlreadyExistsException;
 import one.digitalinnovation.personapi.exception.PersonNotFoundException;
 import one.digitalinnovation.personapi.mapper.PersonMapper;
 import one.digitalinnovation.personapi.repository.PersonRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -20,14 +23,27 @@ public class PersonService {
     private PersonRepository personRepository;
 
     private final PersonMapper personMapper = PersonMapper.INSTANCE;
+    
+    private void verifyIfCpfAlreadyExists(String cpf) throws CpfAlreadyExistsException {
+    	
+    	String verifyCpf = this.personRepository.findByCpf(cpf);
+    	
+    	if(verifyCpf != null) {
+    		throw new CpfAlreadyExistsException("Cpf indisponivel.");
+    	}
+    	
+    }
 
-    public Person createPerson(PersonDTO personDTO) {
+    public Person createPerson(PersonDTO personDTO) throws CpfAlreadyExistsException {
         Person personToSave = personMapper.toModel(personDTO);
+        
+        this.verifyIfCpfAlreadyExists(personToSave.getCpf());
+
 
         Person savedPerson = personRepository.save(personToSave);
         
+        
         return savedPerson;
-        //return createMessageResponse(savedPerson.getId(), "Created person with ID ");
     }
 
     public List<PersonDTO> listAll() {
