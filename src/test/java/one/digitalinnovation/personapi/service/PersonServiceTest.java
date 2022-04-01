@@ -25,7 +25,8 @@ public class PersonServiceTest {
 
     @InjectMocks
     private PersonService personService;
-
+    
+    /*
     @Test
     void testGivenPersonDTOThenReturnSavedMessage() {
         PersonDTO personDTO = createFakeDTO();
@@ -45,4 +46,6 @@ public class PersonServiceTest {
                 .message("Created person with ID " + id)
                 .build();
     }
+    
+    */
 }

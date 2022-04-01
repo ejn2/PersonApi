@@ -1,6 +1,8 @@
 package one.digitalinnovation.personapi.exception;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import lombok.Data;
 
@@ -9,18 +11,21 @@ public class DefaultMessageError {
 
 	private static final long serialVersionUID = 1L;
 	
-	private String pathName;
+	private final String PATHNAME = "/api/v1/people/";
+	private final LocalDateTime TIMESTAMPS = LocalDateTime.now();
 	private String message;
+	private Map<String, String> fieldError = new HashMap<>();
 	private int statusCode;
-	private LocalDateTime timestamps;
 	
-	public DefaultMessageError(String pathName, String message, int statusCode, LocalDateTime timestamps) {
-		this.pathName = pathName;
+	public DefaultMessageError(String message, int statusCode) {
 		this.message = message;
 		this.statusCode = statusCode;
-		this.timestamps = timestamps;
 	}
 	
-	
-	
+	public DefaultMessageError(Map<String, String> errors, int statusCode) {
+		this.message = "Field error";
+		this.fieldError = errors;
+		this.statusCode = statusCode;
+	}
+		
 }
